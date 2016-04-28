@@ -34,7 +34,7 @@ def list_of_sets(min_val,max_val,k,l):
         # more values wanted, than in range available
         raise ValueError
     else:
-        for x in range(0, numberOfSets):
+        for x in range(numberOfSets):
             # print "This is #%d" %x
 
             # mySet = Set()
@@ -44,16 +44,50 @@ def list_of_sets(min_val,max_val,k,l):
             #         mySet.add(myRandomNumber)
             # myList.append(mySet)
 
-            myTuples = ()
-            while len(myTuples) < numberOfElements: 
+            mySet = ()
+            while len(mySet) < numberOfElements: 
                 myRandomNumber = random.randint(min_val, max_val)
-                if myRandomNumber not in myTuples:
-                    myTuples += (myRandomNumber,)
-            myList.append(myTuples)
+                if myRandomNumber not in mySet:
+                    mySet += (myRandomNumber,)
+            myList.append(mySet)
 
         return myList
 
+
+"""
+Write a function that returns the formula for the surface area of a 
+n-dimensional sphere. The input will be n_dimensions and the output should be 
+a function of the symbol r only. Use wikipedia to your advantage.
+Make sure you can use the output of the function to compute the actual number 
+that is the surface of, say, a 17-dimensional sphere with a radius of 1.338.
+"""
+"""
+import sympy
+import math
+def sphere_surface_area(n_dimensions):
+    # n_dimensions = 17
+    r = sympy.symbols('r')
+    nenner = 1
+    if n_dimensions <= 2:
+        # just to be sure, you are not kidding me
+        raise ValueError
+    if (n_dimensions % 2 == 0): #even 
+        '''(2pi^(n/2)*r^(n-1))/2*4*6*...*(n-2) if even n'''
+        for i in xrange(2, (n_dimensions-2)+1, 2):
+            nenner = nenner*i
+        formula = ((2*math.pi**(n_dimensions/2)*r**(n_dimensions-1))/nenner)
+    else: #odd
+        '''(2*2pi^((n-1)/2)*r^(n-1))/1*3*5*...*(n-2) if odd n'''
+        for i in xrange(1, (n_dimensions-2)+1, 2):
+            nenner = nenner*i
+        formula = ((2*2*math.pi**((n_dimensions-1)/2)*r**(n_dimensions-1))/nenner)
+        
+    return formula
+"""
+
 if __name__ == '__main__':
-    # print reverse_concatenate([1,24,56], [4,78,894])
-    # print list_of_sets(min_val=1, max_val=3, k=4, l=3)
+    print reverse_concatenate([1,24,56], [4,78,894])
+    print list_of_sets(min_val=1, max_val=3, k=3, l=3)
     print list_of_sets(min_val=1, max_val=6, k=3, l=5)
+    # print sphere_surface_area(17)
+

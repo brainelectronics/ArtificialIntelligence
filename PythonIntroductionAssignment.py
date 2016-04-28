@@ -44,11 +44,13 @@ def list_of_sets(min_val,max_val,k,l):
             #         mySet.add(myRandomNumber)
             # myList.append(mySet)
 
-            mySet = ()
+            #mySet = ()
+            mySet = set()
             while len(mySet) < numberOfElements: 
                 myRandomNumber = random.randint(min_val, max_val)
                 if myRandomNumber not in mySet:
-                    mySet += (myRandomNumber,)
+                    # mySet += (myRandomNumber,)
+                    mySet.add(myRandomNumber)
             myList.append(mySet)
 
         return myList
@@ -72,15 +74,15 @@ def sphere_surface_area(n_dimensions):
         # just to be sure, you are not kidding me
         raise ValueError
     if (n_dimensions % 2 == 0): #even 
-        '''(2pi^(n/2)*r^(n-1))/2*4*6*...*(n-2) if even n'''
+        '''(2pi^(n/2)*r^(n-1))/2*4*6*....(n-2) if even n'''
         for i in xrange(2, (n_dimensions-2)+1, 2):
             nenner = nenner*i
-        formula = ((2*math.pi**(n_dimensions/2)*r**(n_dimensions-1))/nenner)
+        formula = ((2*(sympy.pi**(n_dimensions/2))*(r**(n_dimensions-1)))/nenner)
     else: #odd
-        '''(2*2pi^((n-1)/2)*r^(n-1))/1*3*5*...*(n-2) if odd n'''
+        '''(2*2pi^((n-1)/2)*r^(n-1))/1*3*5*....(n-2) if odd n'''
         for i in xrange(1, (n_dimensions-2)+1, 2):
             nenner = nenner*i
-        formula = ((2*2*math.pi**((n_dimensions-1)/2)*r**(n_dimensions-1))/nenner)
+        formula = ((2*2*(sympy.pi**((n_dimensions-1)/2))*(r**(n_dimensions-1)))/nenner)
         
     return formula
 """

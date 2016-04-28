@@ -65,24 +65,23 @@ that is the surface of, say, a 17-dimensional sphere with a radius of 1.338.
 """
 """
 import sympy
-import math
 def sphere_surface_area(n_dimensions):
-    # n_dimensions = 17
     r = sympy.symbols('r')
+    #r = 1.338
     nenner = 1
     if n_dimensions <= 2:
         # just to be sure, you are not kidding me
         raise ValueError
     if (n_dimensions % 2 == 0): #even 
-        '''(2pi^(n/2)*r^(n-1))/2*4*6*....(n-2) if even n'''
+        '''((2pi)^(n/2)*r^(n-1))/2*4*6*....(n-2) if even n'''
         for i in xrange(2, (n_dimensions-2)+1, 2):
             nenner = nenner*i
-        formula = ((2*(sympy.pi**(n_dimensions/2))*(r**(n_dimensions-1)))/nenner)
+        formula = ((((2*sympy.pi)**(n_dimensions/2))*(r**(n_dimensions-1)))/nenner)
     else: #odd
-        '''(2*2pi^((n-1)/2)*r^(n-1))/1*3*5*....(n-2) if odd n'''
+        '''(2*(2pi)^((n-1)/2)*r^(n-1))/1*3*5*....(n-2) if odd n'''
         for i in xrange(1, (n_dimensions-2)+1, 2):
             nenner = nenner*i
-        formula = ((2*2*(sympy.pi**((n_dimensions-1)/2))*(r**(n_dimensions-1)))/nenner)
+        formula = ((2*((2*sympy.pi)**((n_dimensions-1)/2))*(r**(n_dimensions-1)))/nenner)
         
     return formula
 """
@@ -91,5 +90,5 @@ if __name__ == '__main__':
     print reverse_concatenate([1,24,56], [4,78,894])
     print list_of_sets(min_val=1, max_val=3, k=3, l=3)
     print list_of_sets(min_val=1, max_val=6, k=3, l=5)
-    # print sphere_surface_area(17)
+    # print sphere_surface_area(n_dimensions=17)
 

@@ -2,33 +2,63 @@
 # -*- coding: utf-8 -*-
 
 """
+In this exercise, you will implement an algorithm to find an approximate 
+solution for the 3-CNF problem, that is, the problem of finding a satisfying 
+assignment for a logical sentence of the form
+(P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S).
+∨ == or
+∧ == and
+¬ == not
+
+The GSAT algorithm is an instance of a class of algorithms called Local Search 
+Algorithms, which explore the state space of boolean assignments to variables 
+by considering a locally optimal, or greedy change to that assignment.
+
+3-CNF formulas are in CNF form, and each clause contains exactly 3 literals. 
+The GSAT algorithm starts with a random truth assignment to the symbols, and 
+then tries to find a satisfying assignment by changing one truth value at
+a time. The symbol to be changed is selected such that the maximum number of 
+clauses is satisfied after each step. If there are multiple variables that 
+satisfy the same number of clauses, the decision between them is arbitrary.
+
+Since the trajectory of the state (the truth assignments to each variable in 
+each step of the algorithm) depends heavily on the initial state, the 
+algorithm is restarted several times with different initial states.
+
+The algorithm performance is influenced by two important parameters: 
+C, the number of clauses, 
+N, the number of proposition symbols.
+"""
+
+'''
+"""
 For this exercise, 3-CNFs are represented as a set of clauses, where each 
-clause consists of two sets: The first one contains the indices of the 
-variables in the clause that are nonnegated; the second one the indices for 
-the variables that appear negated. The state is simply a list of boolean 
+clause consists of two sets: 
+- The first one contains the indices of the variables in the clause that 
+  are nonnegated; 
+- the second one the indices for the variables that appear negated.
+The state is simply a list of boolean 
 values, of length N
+(P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S).
 """
 
 state = [False, False, True, True, False]
 
 # variables in the order (P, Q, R, S, T)
 problem = [
-		   ({0, 1}, {3, }),
-		   ({2, 4}, {0, }),
-		   ({2, 4}, {3, })
+		   ({0, 1}, {3, }), # clause 1 {index 0 and 1 are nonnegated}, {3 appears negated}
+		   ({2, 4}, {0, }), # clause 2
+		   ({2, 4}, {3, }) 	# clause 3
 		   ]
 
-if __name__ == '__main__':
-	pass
-	
-'''
+
 """
 Which complexity class does the problem of satifisbility of 3-CNF formulas 
 belong to? Select the most concise answer. Return a string from your function.
 """
 def three_cnf_complexity():
-	return 'very, very hard'
-
+	# return 'very, very hard'
+	return 'hard'	# how to sort the complexity?!
 
 """
 How many evaluations have to be made in every step of the algorithm 
@@ -38,15 +68,15 @@ Return a sympy function in the variables N and C.
 from sympy import var
 var('N C')
 def gsat_step_complexity(N, C):
-	return N + C / 2.17 
-
+	# return N + C / 2.17 
+	return C
 
 """
 Is this algorithm complete? Return True or False (as bool values)
 """
 def gsat_complete():
-	return None
-
+	# return None
+	return False
 
 """
 Generate random instances of 3-CNF problems, given the number of 
@@ -54,12 +84,38 @@ clauses n_clauses and the number of variables n_vars.
 Note that the representation of the positive and negative literals for 
 each clause as sets does not allow clauses like P∧P∧Q. Your random problems 
 should always have 3 different literals in the set representation.
+
+(P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S).
+(P, Q, R, S, T)
 """
+'''
+import random
 def generate_random_problem(n_vars, n_clauses):
-	problem = None
+	# problem = None
+	problem = []	# empty list of clauses
+	for x in range(n_clauses):	# loop through number of wanted clauses
+		myClause = ()	# tuple containing positive and negative literals
+		myIndexSet = set()
+		myAppearSet = set()
+		while len(myIndexSet) < 2:
+			if len(myAppearSet) < 1:
+				myRandomNumber = random.randint(0, n_vars)
+				myAppearSet.add(myRandomNumber)
+
+			myRandomNumber = random.randint(0, n_vars)
+			if myRandomNumber not in myAppearSet:
+				myIndexSet.add(myRandomNumber)
+
+		myClause += (myIndexSet, myAppearSet)
+		problem.append(myClause)
+	# problem = [
+	# 		({0, 1}, {3, }),	# clause 1 {index 0 and 1 are nonnegated}, {3 appears negated}
+	# 		({2, 4}, {0, }),	# clause 2
+	# 		({2, 4}, {3, }) 	# clause 3
+	# 		]
 	return problem
 
-
+'''
 """
 Can you think of a simple way to simplify the problem in cases where clauses 
 are tautological?
@@ -70,25 +126,47 @@ def simplify_three_cnf(problem):
 	return simplified_problem
 
 simplify_three_cnf(problem)
-
+'''
 
 """
 Write a function that generates the initial state for a 3-CNF SAT problem. 
 It should be truly random, so that calling it multiple times gives 
 different results.
 """
+import random
 def get_initial_state(n_vars, n_clauses):
-	return None
+	# return None
+	possibilities = [True, False]
+	myInitialState = []
+	for x in range(n_vars):
+		myInitialState.append(random.choice(possibilities))
+	return myInitialState
 
 
 """
 Now, write a function that evaluates the truth value of a single clause, and 
 returns whether it is satisfied:
+(P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S).
+(P, Q, R, S, T)
 """
 def eval_clause(state, clause):
-	return None
+	# return None
+	myResult = (
+		(state[0] or state[1] or (not state[3])) 
+		and (state[2] or state[4] or (not state[0])) 
+		and (state[2] or state[4] or (not state[3])))
+	return myResult
 
 
+if __name__ == '__main__':
+	print generate_random_problem(n_vars=5, n_clauses=3)
+
+	someState = get_initial_state(n_vars=5, n_clauses=None)
+	print someState
+
+	# print eval_clause(state=someState, clause=)
+
+'''
 """
 Building on this, add a function that evaluates the truth value of a 
 whole 3-CNF formula problem given the state:

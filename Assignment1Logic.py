@@ -60,7 +60,7 @@ belong to? Select the most concise answer. Return a string from your function.
 """
 def three_cnf_complexity():
     # return 'very, very hard'
-    return 'NP-hard'
+    return 'NP-Hard'
 
 """
 How many evaluations have to be made in every step of the algorithm 
@@ -97,6 +97,7 @@ should always have 3 different literals in the set representation.
 import random
 def generate_random_problem(n_vars, n_clauses):
     # problem = None
+    n_vars = n_vars -1 # because starting from 0
     problem = []    # empty list of clauses
     for x in range(n_clauses):  # loop through number of wanted clauses
         myClause = ()   # tuple containing positive and negative literals
@@ -119,7 +120,7 @@ def generate_random_problem(n_vars, n_clauses):
     #       ({2, 4}, {3, })     # clause 3
     #       ]
     return problem
-
+# done!
 # '''
 """
 Can you think of a simple way to simplify the problem in cases where clauses 
@@ -146,7 +147,7 @@ def get_initial_state(n_vars, n_clauses):
     for x in range(n_vars):
         myInitialState.append(random.choice(possibilities))
     return myInitialState
-
+# done!
 
 """
 Now, write a function that evaluates the truth value of a single clause, and 
@@ -155,34 +156,58 @@ returns whether it is satisfied:
 (P, Q, R, S, T)
 """
 def eval_clause(state, clause):
-    # return None
-    # myResult = (
-    #     (state[0] or state[1] or (not state[3])) 
-    #     and (state[2] or state[4] or (not state[0])) 
-    #     and (state[2] or state[4] or (not state[3])))
-    # myResult = 
-    return None
+    # all(a_list)# logical and
+    # any(a_list)# logical or
+    nonNegatedIndexes = list(clause[0])
+    theNegatedIndex = list(clause[1])
+    selectedList = []
+    for element in nonNegatedIndexes:
+        selectedList.append(state[element])
+    
+    return (any(selectedList) or (not state[theNegatedIndex[0]]))
+# done!
 
 
-if __name__ == '__main__':
-    someProblem = generate_random_problem(n_vars=5, n_clauses=3)
-    print someProblem
-    # print someProblem[0][0]
 
-    someState = get_initial_state(n_vars=5, n_clauses=None)
-    print someState
-
-    # print eval_clause(state=someState, clause=)
-
-'''
 """
 Building on this, add a function that evaluates the truth value of a 
 whole 3-CNF formula problem given the state:
 """
 def eval_three_cnf(problem, state):
-    return None
+    nonNegated = []
+    theNegated = []
+    for i in range(len(problem)):
+        nonNegated.append(list(problem[i][0]))
+        #nonNegated.append(list(problem[i][0])[1])
+        theNegated.append(list(problem[i][1])[0])
+
+    # return nonNegated
+    # return theNegated
+    # return len(nonNegated)
+    
+    myClauses = []
+    for element in nonNegated:
+        selectedList = []
+        for subele in element:
+            selectedList.append(state[subele])
+        subResult = (any(selectedList) or (not state[theNegated[0]]))
+        myClauses.append(subResult)
+    finalResult = all(myClauses)
+    return finalResult
 
 
+if __name__ == '__main__':
+    # someProblem = generate_random_problem(n_vars=5, n_clauses=3)
+    # print someProblem
+    # # print someProblem[0][0]
+
+    # someState = get_initial_state(n_vars=5, n_clauses=None)
+    # print someState
+
+    # print eval_clause(state=[True, True, False, True, False], clause=({1, 2}, {3, }))
+
+    print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
+'''
 """
 Write a function that checks if a solution, i.e. a state that satisfies all 
 clauses, has been found. 
@@ -251,4 +276,3 @@ def foo():
 
 timeit.timeit(foo)
 '''
-

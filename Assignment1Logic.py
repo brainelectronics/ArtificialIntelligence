@@ -151,6 +151,7 @@ def simplify_three_cnf(problem):
     
     return problem
     '''
+
     i=0
     for x in problem:
         doubles = x[0].intersection(x[1])
@@ -170,12 +171,15 @@ different results.
 """
 import random
 def get_initial_state(n_vars, n_clauses):
-    # return None
+    '''
     possibilities = [True, False]
     myInitialState = []
     for x in range(n_vars):
         myInitialState.append(random.choice(possibilities))
     return myInitialState
+    '''
+    return [bool(random.randint(0, 1)) for x in range(n_vars)]
+
 # done!
 
 """
@@ -187,6 +191,7 @@ returns whether it is satisfied:
 def eval_clause(state, clause):
     # all(a_list)# logical and
     # any(a_list)# logical or
+    '''
     selectedList = []
     for element in list(clause[0]):
         selectedList.append(state[element])
@@ -194,6 +199,10 @@ def eval_clause(state, clause):
         selectedList.append(not state[element])
     
     return any(selectedList)
+    '''
+    return any([state[e] for e in clause[0]]+[not state[e] for e in clause[1]])
+    # return (any([state[element]] for element in list(clause[0])) or any([state[element]] for element in list(clause[1])))
+
 # done!
 
 
@@ -203,10 +212,13 @@ Building on this, add a function that evaluates the truth value of a
 whole 3-CNF formula problem given the state:
 """
 def eval_three_cnf(problem, state):
-    aList = []
-    for aClause in problem:
-        aList.append(eval_clause(state=state, clause=aClause))
-    return all(aList)
+    # aList = []
+    # for aClause in problem:
+    #     aList.append(eval_clause(state=state, clause=aClause))
+    # return all(aList)
+
+    return all([eval_clause(state=state, clause=aClause) for aClause in problem])
+
 # done!
 
 """
@@ -219,13 +231,15 @@ def am_i_done(problem, state):
     return eval_three_cnf(problem=problem, state=state)
 # done!
 
-'''
+
 """
 Write a function that runs one chain of GSAT for a given maximum number of 
 iterations max_iter. It should return the best encountered state and whether 
 the algorithm succeeded in finding a satisfying assignment or not, and it 
 should return as early as possible.
 """
+'''
+# orginal
 def run_gsat_chain(problem, state, max_iter):
     for _ in xrange(max_iter):
         pass
@@ -236,7 +250,40 @@ def run_gsat_chain(problem, state, max_iter):
 
 C, N = 4, 10
 run_gsat_chain(simplify_three_cnf(generate_random_problem(N, C)), get_initial_state(N, C), 100)
+'''
+import copy
+def run_gsat_chain(problem, state, max_iter):
+    stateBest = state
+    wirklichBeste = 0
+    wirklichStateBeste = state
+    success = False
+    
+    for unimportant in xrange(max_iter):
+        
+        # stateTemp = copy.deepcopy(stateBest)
+        stateTemp = [element for element in stateBest]
+        beste = 0
+        
+        for stateI in xrange(len(state)):
+            stateTemp[stateI] = not stateTemp[stateI]
+            gefunden = 0
+            for x in xrange(len(problem)):
+                if eval_clause(state=stateTemp, clause=problem[x]):
+                    gefunden = gefunden + 1
+                    success = True
+                    if gefunden == len(problem):
+                        return stateTemp, True
+            if gefunden > beste:
+                beste = gefunden
+                stateBest= copy.deepcopy(stateTemp)
+            
+            stateTemp[stateI] = not stateTemp[stateI]
+        
+        if(beste > wirklichBeste):
+            wirklichStateBeste = stateBest
 
+    final_state = wirklichStateBeste
+    return final_state, success
 
 """
 Now, write a function that generates an initial state in n_vars variables for 
@@ -244,18 +291,25 @@ the multiple chains (at most max_n_chains of them), runs each of the chains,
 and returns success (as a Boolean variable) and a satisfying assignment 
 if there was one, or else the best assignment that was found.
 """
+'''
+# orginal
 import random
 def run_gsat(problem, max_iter, n_vars, max_n_chains):
-    success = bool(round(random.random()))
-    satisfying_assignment = 42 if success else 17
+    satisfying_assignment = None
+    for x in xrange(max_n_chains):
+        state = get_initial_state(n_vars,None)
+        (final_state, success) = run_gsat_chain(problem, state, max_iter)
+        if success:
+            satisfying_assignment = final_state
+    
     return success, satisfying_assignment
-
+    
 C, N = 4, 10
 run_gsat(
     simplify_three_cnf(generate_random_problem(N, C)), 
     max_iter=10, n_vars=N, max_n_chains=10)
-
-
+'''
+'''
 """
 Experiment! Generate random problems of different sizes by varying C and N 
 for your assignment function and use the timing functions of python to check 
@@ -291,3 +345,12 @@ if __name__ == '__main__':
 
     # print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
     print am_i_done(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
+
+    C, N = 4, 10
+    print run_gsat_chain(
+        problem=simplify_three_cnf(generate_random_problem(n_vars=N, n_clauses=C)), 
+        state=get_initial_state(N, C), 
+        max_iter=100)
+
+
+

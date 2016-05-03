@@ -60,7 +60,7 @@ belong to? Select the most concise answer. Return a string from your function.
 """
 def three_cnf_complexity():
     # return 'very, very hard'
-    return 'NP-Hard'
+    return 'NP-Complete'
 
 """
 How many evaluations have to be made in every step of the algorithm 
@@ -127,12 +127,41 @@ Can you think of a simple way to simplify the problem in cases where clauses
 are tautological?
 Write a function that simplifies the problem accordingly.
 """
-def simplify_three_cnf(problem):
-    simplified_problem = None
-    return simplified_problem
+testproblem=[
+    ({0,1},{3,}),
+    ({2,4},{2,}),
+    ({0,4},{4,}),
+    ({3,1},{1,}),
+    ({0,1},{1,})
+]
 
-# simplify_three_cnf(problem)
-# '''
+def simplify_three_cnf(problem):
+    '''
+    simplified_problem = None
+    tautologicals = []
+    for aClause in problem:
+        empty = aClause[0].intersection(aClause[1])
+
+        if empty:
+            tautologicals.append(aClause)
+    
+    #simplified_problem = (problem - tautologicals)
+    #for thing in tautologicals:
+    #    problem.remove(thing)
+    
+    return problem
+    '''
+    i=0
+    for x in problem:
+        doubles = x[0].intersection(x[1])
+        #tautologicals.append(doubles)
+        
+        for element in doubles:
+            problem.pop(i)
+        i += 1
+    return problem
+# done!
+# simplify_three_cnf(problem=testproblem)
 
 """
 Write a function that generates the initial state for a 3-CNF SAT problem. 
@@ -174,40 +203,13 @@ Building on this, add a function that evaluates the truth value of a
 whole 3-CNF formula problem given the state:
 """
 def eval_three_cnf(problem, state):
-    nonNegated = []
-    theNegated = []
-    for i in range(len(problem)):
-        nonNegated.append(list(problem[i][0]))
-        #nonNegated.append(list(problem[i][0])[1])
-        theNegated.append(list(problem[i][1])[0])
-
-    # return nonNegated
-    # return theNegated
-    # return len(nonNegated)
+    this = True
+    for aClause in problem:
+        this = this and eval_clause(state=state, clause=aClause)
     
-    myClauses = []
-    for element in nonNegated:
-        selectedList = []
-        for subele in element:
-            selectedList.append(state[subele])
-        subResult = (any(selectedList) or (not state[theNegated[0]]))
-        myClauses.append(subResult)
-    finalResult = all(myClauses)
-    return finalResult
+    return this
+# done!
 
-
-if __name__ == '__main__':
-    # someProblem = generate_random_problem(n_vars=5, n_clauses=3)
-    # print someProblem
-    # # print someProblem[0][0]
-
-    # someState = get_initial_state(n_vars=5, n_clauses=None)
-    # print someState
-
-    # print eval_clause(state=[True, True, False, True, False], clause=({1, 2}, {3, }))
-
-    print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
-'''
 """
 Write a function that checks if a solution, i.e. a state that satisfies all 
 clauses, has been found. 
@@ -215,9 +217,10 @@ The function should return the Boolean value True if the algorithm is done,
 and False otherwise.
 """
 def am_i_done(problem, state):
-    return 42
+    return eval_three_cnf(problem=problem, state=state)
+# done!
 
-
+'''
 """
 Write a function that runs one chain of GSAT for a given maximum number of 
 iterations max_iter. It should return the best encountered state and whether 
@@ -276,3 +279,16 @@ def foo():
 
 timeit.timeit(foo)
 '''
+
+if __name__ == '__main__':
+    # someProblem = generate_random_problem(n_vars=5, n_clauses=3)
+    # print someProblem
+    # # print someProblem[0][0]
+
+    # someState = get_initial_state(n_vars=5, n_clauses=None)
+    # print someState
+
+    # print eval_clause(state=[True, True, False, True, False], clause=({1, 2}, {3, }))
+
+    # print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
+    print am_i_done(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])

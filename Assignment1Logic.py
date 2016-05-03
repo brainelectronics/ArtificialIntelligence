@@ -187,13 +187,13 @@ returns whether it is satisfied:
 def eval_clause(state, clause):
     # all(a_list)# logical and
     # any(a_list)# logical or
-    nonNegatedIndexes = list(clause[0])
-    theNegatedIndex = list(clause[1])
     selectedList = []
-    for element in nonNegatedIndexes:
+    for element in list(clause[0]):
         selectedList.append(state[element])
+    for element in list(clause[1]):
+        selectedList.append(not state[element])
     
-    return (any(selectedList) or (not state[theNegatedIndex[0]]))
+    return any(selectedList)
 # done!
 
 
@@ -203,11 +203,10 @@ Building on this, add a function that evaluates the truth value of a
 whole 3-CNF formula problem given the state:
 """
 def eval_three_cnf(problem, state):
-    this = True
+    aList = []
     for aClause in problem:
-        this = this and eval_clause(state=state, clause=aClause)
-    
-    return this
+        aList.append(eval_clause(state=state, clause=aClause))
+    return all(aList)
 # done!
 
 """

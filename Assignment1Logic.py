@@ -240,17 +240,6 @@ should return as early as possible.
 """
 '''
 # orginal
-def run_gsat_chain(problem, state, max_iter):
-    for _ in xrange(max_iter):
-        pass
-
-    final_state = 0
-    success = bool(13 % 1)
-    return final_state, success
-
-C, N = 4, 10
-run_gsat_chain(simplify_three_cnf(generate_random_problem(N, C)), get_initial_state(N, C), 100)
-'''
 import copy
 def run_gsat_chain(problem, state, max_iter):
     stateBest = state
@@ -258,33 +247,73 @@ def run_gsat_chain(problem, state, max_iter):
     wirklichStateBeste = state
     success = False
     
-    for unimportant in xrange(max_iter):
-        
-        # stateTemp = copy.deepcopy(stateBest)
+    for _ in xrange(max_iter):
+        #stateTemp = copy.deepcopy(stateBest)
         stateTemp = [element for element in stateBest]
-        beste = 0
+        thisBestIter = 0
         
         for stateI in xrange(len(state)):
             stateTemp[stateI] = not stateTemp[stateI]
             gefunden = 0
-            for x in xrange(len(problem)):
-                if eval_clause(state=stateTemp, clause=problem[x]):
+            
+            for x in problem:#xrange(len(problem)):
+                if eval_clause(stateTemp, x):
                     gefunden = gefunden + 1
                     success = True
                     if gefunden == len(problem):
                         return stateTemp, True
             if gefunden > beste:
-                beste = gefunden
+                thisBestIter = gefunden
                 stateBest= copy.deepcopy(stateTemp)
             
             stateTemp[stateI] = not stateTemp[stateI]
         
-        if(beste > wirklichBeste):
+        if(beste>wirklichBeste):
             wirklichStateBeste = stateBest
 
     final_state = wirklichStateBeste
     return final_state, success
+'''
 
+import copy
+def run_gsat_chain(problem, state, max_iter):
+    stateBest = state
+    globalBestIter = 0
+    wirklichStateBeste = state
+    success = False
+    
+    for unimportant in range(max_iter):
+        stateTemp = stateBest[:]
+        thisBestIter = 0
+        
+        for stateI in xrange(len(state)):
+            stateTemp[stateI] = not stateTemp[stateI] # flip element stateI
+            localFound = 0 # how much clauses are satisfied
+            
+            # check all clauses of the problem with the current state list
+            for aClause in problem:
+                if eval_clause(state=stateTemp, clause=aClause):
+                    localFound += 1 # increase number of satisfied clauses
+                    success = True
+
+            # if current state list satisfied all clauses in the problem
+            if localFound == len(problem):
+                return stateTemp, True
+            
+            # if this state satisfies more than the best until now
+            if localFound > thisBestIter:
+                thisBestIter = localFound
+                stateBest = stateTemp[:]
+
+            stateTemp[stateI] = not stateTemp[stateI] # undo flip element
+        
+        if(thisBestIter > globalBestIter):
+            globalBestIter = thisBestIter
+            wirklichStateBeste = stateBest
+
+    final_state = wirklichStateBeste
+    return final_state, success
+#'''
 """
 Now, write a function that generates an initial state in n_vars variables for 
 the multiple chains (at most max_n_chains of them), runs each of the chains, 
@@ -303,11 +332,13 @@ def run_gsat(problem, max_iter, n_vars, max_n_chains):
             satisfying_assignment = final_state
     
     return success, satisfying_assignment
-    
+
 C, N = 4, 10
 run_gsat(
-    simplify_three_cnf(generate_random_problem(N, C)), 
-    max_iter=10, n_vars=N, max_n_chains=10)
+    problem=simplify_three_cnf(generate_random_problem(N, C)), 
+    max_iter=10, 
+    n_vars=N, 
+    max_n_chains=10)
 '''
 '''
 """
@@ -344,13 +375,17 @@ if __name__ == '__main__':
     # print eval_clause(state=[True, True, False, True, False], clause=({1, 2}, {3, }))
 
     # print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
-    print am_i_done(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
+    # print am_i_done(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
 
+    import time
+    now = time.time()
     C, N = 4, 10
-    print run_gsat_chain(
-        problem=simplify_three_cnf(generate_random_problem(n_vars=N, n_clauses=C)), 
-        state=get_initial_state(N, C), 
-        max_iter=100)
+    for x in range(10000):
+        run_gsat_chain(
+            problem=simplify_three_cnf(generate_random_problem(n_vars=N, n_clauses=C)), 
+            state=get_initial_state(N, C), 
+            max_iter=100)
+    print "%s" %(time.time()-now)
 
 
 

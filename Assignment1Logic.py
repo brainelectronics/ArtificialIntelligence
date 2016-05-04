@@ -158,20 +158,29 @@ testproblem=[
 ]
 
 def simplify_three_cnf(problem):
-    '''
-    simplified_problem = None
-    tautologicals = []
+    # '''
+    simplified_problem = []
+    # tautologicals = []
     for aClause in problem:
-        empty = aClause[0].intersection(aClause[1])
+        aIntersection = aClause[0].intersection(aClause[1])
 
-        if empty:
-            tautologicals.append(aClause)
+        # if empty:
+        #     tautologicals.append(aClause)
+        if not aIntersection and aClause not in simplified_problem:
+            simplified_problem.append(aClause)
     
-    #simplified_problem = (problem - tautologicals)
-    #for thing in tautologicals:
+    return simplified_problem
+
+    # for thing in tautologicals:
     #    problem.remove(thing)
-    
-    return problem
+
+    # finalResult = []
+    # for element in problem:
+    #     if element not in finalResult:
+    #         finalResult.append(element)
+
+    # return list(set(problem))
+    #return finalResult
     '''
 
     i=0
@@ -183,6 +192,7 @@ def simplify_three_cnf(problem):
         problem.pop(i)
         i += 1
     return problem
+    '''
 # done!
 
 
@@ -400,7 +410,7 @@ import time
 if __name__ == '__main__':
     numberOfTestIterations = 100000
     # print generate_random_problem(n_vars=5, n_clauses=3)
-    # '''
+    '''
     aInitState = get_initial_state(n_vars=numberOfTestIterations, n_clauses=None)
     aTestProblem = generate_random_problem(n_vars=numberOfTestIterations, n_clauses=1)
     aTestClause = aTestProblem[0]
@@ -424,8 +434,15 @@ if __name__ == '__main__':
     print "A took %s" %(test1 - now)
     print "B took %s" %(test2 - test1)
     print "Efficient by %s" %timeImporvement
-    # '''
+    '''
 
+    problem_taut = [({0, 1}, {0}), ({1, 2}, {0})]
+    problem_double = [({0, 1}, {2}), ({1, 3, 4}, {}), ({1, 0}, {2})]
+
+    print "Tautological", problem_taut
+    print simplify_three_cnf(problem_taut)
+    print "Double", problem_double
+    print simplify_three_cnf(problem_double)
     # print run_gsat_chain(
     # [
     #     ({1, 2}, {0}),

@@ -196,6 +196,13 @@ def get_initial_state(n_vars, n_clauses):
     return [bool(random.randint(0, 1)) for x in range(n_vars)]
 # done!
 
+def get_initial_state_fast(n_vars, n_clauses):
+    possibilities = [True, False]
+    myInitialState = []
+    for x in range(n_vars):
+        myInitialState.append(random.choice(possibilities))
+    return myInitialState
+# done!
 
 """
 Now, write a function that evaluates the truth value of a single clause, and 
@@ -209,6 +216,18 @@ def eval_clause(state, clause):
     return any([state[e] for e in clause[0]]+[not state[e] for e in clause[1]])
 # done!
 
+def eval_clause_fast(state, clause):
+    # all(a_list)# logical and
+    # any(a_list)# logical or
+    nonNegatedIndexes = list(clause[0])
+    theNegatedIndex = list(clause[1])
+    selectedList = []
+    for element in nonNegatedIndexes:
+        selectedList.append(state[element])
+    
+    return (any(selectedList) or (not state[theNegatedIndex[0]]))
+# done!
+
 
 """
 Building on this, add a function that evaluates the truth value of a 
@@ -217,6 +236,28 @@ whole 3-CNF formula problem given the state:
 def eval_three_cnf(problem, state):
     return all([eval_clause(state=state, clause=aClause) for aClause in problem])
 # done!
+
+def eval_three_cnf_fast(problem, state):
+    nonNegated = []
+    theNegated = []
+    for i in range(len(problem)):
+        nonNegated.append(list(problem[i][0]))
+        #nonNegated.append(list(problem[i][0])[1])
+        theNegated.append(list(problem[i][1])[0])
+
+    # return nonNegated
+    # return theNegated
+    # return len(nonNegated)
+    
+    myClauses = []
+    for element in nonNegated:
+        selectedList = []
+        for subele in element:
+            selectedList.append(state[subele])
+        subResult = (any(selectedList) or (not state[theNegated[0]]))
+        myClauses.append(subResult)
+    finalResult = all(myClauses)
+    return finalResult
 
 
 """
@@ -272,7 +313,6 @@ def run_gsat_chain(problem, state, max_iter):
     final_state = wirklichStateBeste
     return final_state, success
 '''
-import copy
 def run_gsat_chain(problem, state, max_iter):
     stateBest = state
     globalBestIter = 0
@@ -319,17 +359,18 @@ the multiple chains (at most max_n_chains of them), runs each of the chains,
 and returns success (as a Boolean variable) and a satisfying assignment 
 if there was one, or else the best assignment that was found.
 """
-# orginal
 import random
 def run_gsat(problem, max_iter, n_vars, max_n_chains):
     satisfying_assignment = None
     for x in xrange(max_n_chains):
         state = get_initial_state(n_vars=n_vars,n_clauses=None)
         (final_state, success) = run_gsat_chain(problem=problem, state=state, max_iter=max_iter)
-        if success:
+        if success: # found a satisfying assignment
             satisfying_assignment = final_state
-    
+            break
     return success, satisfying_assignment
+# done!
+
 
 '''
 """
@@ -355,14 +396,42 @@ def foo():
 timeit.timeit(foo)
 '''
 
+import time
 if __name__ == '__main__':
-    someProblem = generate_random_problem_t(n_vars=5, n_clauses=3)
-    print someProblem
-    # # print someProblem[0][0]
+    numberOfTestIterations = 100000
+    # print generate_random_problem(n_vars=5, n_clauses=3)
+    # '''
+    aInitState = get_initial_state(n_vars=numberOfTestIterations, n_clauses=None)
+    aTestProblem = generate_random_problem(n_vars=numberOfTestIterations, n_clauses=1)
+    aTestClause = aTestProblem[0]
 
-    # someState = get_initial_state(n_vars=5, n_clauses=None)
-    # print someState
+    now = time.time()
+    for x in range(numberOfTestIterations):
+        # get_initial_state(n_vars=5, n_clauses=None)
+        # eval_clause(state=aInitState, clause=aTestClause)
+        eval_three_cnf(problem=aTestProblem , state=aInitState)
+    test1 = time.time()
 
+    for x in range(numberOfTestIterations):
+        # get_initial_state_fast(n_vars=5, n_clauses=None)
+        # eval_clause_fast(state=aInitState, clause=aTestClause)
+        eval_three_cnf_fast(problem=aTestProblem , state=aInitState)
+    test2 = time.time()
+
+    deltaT1 = test1 - now
+    deltaT2 = test2 -test1
+    timeImporvement = deltaT1/deltaT2
+    print "A took %s" %(test1 - now)
+    print "B took %s" %(test2 - test1)
+    print "Efficient by %s" %timeImporvement
+    # '''
+
+    # print run_gsat_chain(
+    # [
+    #     ({1, 2}, {0}),
+    #     ({3, 4}, {0}),
+    #     ({0, 5, 6}, {}),
+    # ],[True, False, False, False, False, False, False],100)
     # print eval_clause(state=[True, True, False, True, False], clause=({1, 2}, {3, }))
 
     # print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
@@ -381,6 +450,7 @@ if __name__ == '__main__':
             max_iter=100)
     print "%s" %(time.time()-now)
     '''
+
     '''
     C, N = 4, 10
     print run_gsat(

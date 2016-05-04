@@ -54,13 +54,15 @@ problem = [
 #(P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S)
 #problem is ((P==0)∨(Q==1)∨(not S==3)) and ((R==2)∨(T==4)∨(P==0)) and ((R==2)∨(T==4)∨(S==3)))
 
+
 """
 Which complexity class does the problem of satifisbility of 3-CNF formulas 
 belong to? Select the most concise answer. Return a string from your function.
 """
 def three_cnf_complexity():
-    # return 'very, very hard'
     return 'NP-Complete'
+# done!
+
 
 """
 How many evaluations have to be made in every step of the algorithm 
@@ -72,7 +74,8 @@ from sympy import var
 var('N C')
 def gsat_step_complexity(N, C):
     # return N + C / 2.17 
-    return C
+    return N*C
+# done!
 '''
 
 
@@ -82,6 +85,8 @@ Is this algorithm complete? Return True or False (as bool values)
 def gsat_complete():
     # return None
     return False
+# done!
+
 
 """
 Generate random instances of 3-CNF problems, given the number of 
@@ -93,7 +98,6 @@ should always have 3 different literals in the set representation.
 (P∨Q∨¬S)∧(R∨T∨¬P)∧(R∨T∨¬S).
 (P, Q, R, S, T)
 """
-# '''
 import random
 def generate_random_problem(n_vars, n_clauses):
     # problem = None
@@ -121,7 +125,25 @@ def generate_random_problem(n_vars, n_clauses):
     #       ]
     return problem
 # done!
-# '''
+
+'''
+# tobi
+def generate_random_problem_t(n_vars, n_clauses):
+    # problem = None
+    n_vars = n_vars -1 # because starting from 0
+    problem = []    # empty list of clauses
+    for x in range(n_clauses):  # loop through number of wanted clauses
+        liste = random.sample(range(0, n_vars), 3)
+        split = random.randint(0, 3)
+        nonnegated = set(liste[0:split])
+        negated = set(liste[split:])
+
+        entry = tuple([nonnegated, negated])
+        problem.append(entry)
+    return problem
+'''
+
+
 """
 Can you think of a simple way to simplify the problem in cases where clauses 
 are tautological?
@@ -157,12 +179,12 @@ def simplify_three_cnf(problem):
         doubles = x[0].intersection(x[1])
         #tautologicals.append(doubles)
         
-        for element in doubles:
-            problem.pop(i)
+        #for element in doubles:
+        problem.pop(i)
         i += 1
     return problem
 # done!
-# simplify_three_cnf(problem=testproblem)
+
 
 """
 Write a function that generates the initial state for a 3-CNF SAT problem. 
@@ -171,16 +193,9 @@ different results.
 """
 import random
 def get_initial_state(n_vars, n_clauses):
-    '''
-    possibilities = [True, False]
-    myInitialState = []
-    for x in range(n_vars):
-        myInitialState.append(random.choice(possibilities))
-    return myInitialState
-    '''
     return [bool(random.randint(0, 1)) for x in range(n_vars)]
-
 # done!
+
 
 """
 Now, write a function that evaluates the truth value of a single clause, and 
@@ -191,20 +206,8 @@ returns whether it is satisfied:
 def eval_clause(state, clause):
     # all(a_list)# logical and
     # any(a_list)# logical or
-    '''
-    selectedList = []
-    for element in list(clause[0]):
-        selectedList.append(state[element])
-    for element in list(clause[1]):
-        selectedList.append(not state[element])
-    
-    return any(selectedList)
-    '''
     return any([state[e] for e in clause[0]]+[not state[e] for e in clause[1]])
-    # return (any([state[element]] for element in list(clause[0])) or any([state[element]] for element in list(clause[1])))
-
 # done!
-
 
 
 """
@@ -212,14 +215,9 @@ Building on this, add a function that evaluates the truth value of a
 whole 3-CNF formula problem given the state:
 """
 def eval_three_cnf(problem, state):
-    # aList = []
-    # for aClause in problem:
-    #     aList.append(eval_clause(state=state, clause=aClause))
-    # return all(aList)
-
     return all([eval_clause(state=state, clause=aClause) for aClause in problem])
-
 # done!
+
 
 """
 Write a function that checks if a solution, i.e. a state that satisfies all 
@@ -274,7 +272,6 @@ def run_gsat_chain(problem, state, max_iter):
     final_state = wirklichStateBeste
     return final_state, success
 '''
-
 import copy
 def run_gsat_chain(problem, state, max_iter):
     stateBest = state
@@ -313,33 +310,27 @@ def run_gsat_chain(problem, state, max_iter):
 
     final_state = wirklichStateBeste
     return final_state, success
-#'''
+# done!
+
+
 """
 Now, write a function that generates an initial state in n_vars variables for 
 the multiple chains (at most max_n_chains of them), runs each of the chains, 
 and returns success (as a Boolean variable) and a satisfying assignment 
 if there was one, or else the best assignment that was found.
 """
-'''
 # orginal
 import random
 def run_gsat(problem, max_iter, n_vars, max_n_chains):
     satisfying_assignment = None
     for x in xrange(max_n_chains):
-        state = get_initial_state(n_vars,None)
-        (final_state, success) = run_gsat_chain(problem, state, max_iter)
+        state = get_initial_state(n_vars=n_vars,n_clauses=None)
+        (final_state, success) = run_gsat_chain(problem=problem, state=state, max_iter=max_iter)
         if success:
             satisfying_assignment = final_state
     
     return success, satisfying_assignment
 
-C, N = 4, 10
-run_gsat(
-    problem=simplify_three_cnf(generate_random_problem(N, C)), 
-    max_iter=10, 
-    n_vars=N, 
-    max_n_chains=10)
-'''
 '''
 """
 Experiment! Generate random problems of different sizes by varying C and N 
@@ -365,8 +356,8 @@ timeit.timeit(foo)
 '''
 
 if __name__ == '__main__':
-    # someProblem = generate_random_problem(n_vars=5, n_clauses=3)
-    # print someProblem
+    someProblem = generate_random_problem_t(n_vars=5, n_clauses=3)
+    print someProblem
     # # print someProblem[0][0]
 
     # someState = get_initial_state(n_vars=5, n_clauses=None)
@@ -376,16 +367,26 @@ if __name__ == '__main__':
 
     # print eval_three_cnf(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
     # print am_i_done(problem = [({0, 1}, {3, }),({2, 4}, {0, }),({2, 4}, {3, })], state=[True, True, False, True, False])
+    
+    # print simplify_three_cnf(problem=testproblem)
 
+    '''
     import time
     now = time.time()
     C, N = 4, 10
     for x in range(10000):
         run_gsat_chain(
-            problem=simplify_three_cnf(generate_random_problem(n_vars=N, n_clauses=C)), 
+            problem=simplify_three_cnf(generate_random_problem_t(n_vars=N, n_clauses=C)), 
             state=get_initial_state(N, C), 
             max_iter=100)
     print "%s" %(time.time()-now)
-
-
+    '''
+    '''
+    C, N = 4, 10
+    print run_gsat(
+        problem=simplify_three_cnf(generate_random_problem(N, C)), 
+        max_iter=10, 
+        n_vars=N, 
+        max_n_chains=10)
+    '''
 

@@ -132,8 +132,9 @@ def generate_random_problem_t(n_vars, n_clauses):
     # problem = None
     n_vars = n_vars -1 # because starting from 0
     problem = []    # empty list of clauses
+    theSize = range(0, n_vars)
     for x in range(n_clauses):  # loop through number of wanted clauses
-        liste = random.sample(range(0, n_vars), 3)
+        liste = random.sample(theSize, 3)
         split = random.randint(0, 3)
         nonnegated = set(liste[0:split])
         negated = set(liste[split:])
@@ -436,6 +437,8 @@ if __name__ == '__main__':
     print "Efficient by %s" %timeImporvement
     '''
 
+    '''
+    # test tautologicals and doubles
     problem_taut = [({0, 1}, {0}), ({1, 2}, {0})]
     problem_double = [({0, 1}, {2}), ({1, 3, 4}, {}), ({1, 0}, {2})]
 
@@ -443,6 +446,8 @@ if __name__ == '__main__':
     print simplify_three_cnf(problem_taut)
     print "Double", problem_double
     print simplify_three_cnf(problem_double)
+    '''
+
     # print run_gsat_chain(
     # [
     #     ({1, 2}, {0}),

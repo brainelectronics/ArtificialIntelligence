@@ -90,7 +90,17 @@ someTestStates = [
 ['-C_0_0', 'NV_0_1', '-C_0_2', '-C_0_3', 'NV_1_0', 'NV_1_1', '-C_1_2', 'NV_1_3', 'C_2_0', 'NV_2_1', 'C_2_2', 'NV_2_3', '-C_3_0', 'NV_3_1', '-C_3_2', '-C_3_3'],
 ['-C_0_0', '-C_0_1', 'NV_0_2', '-C_0_3', 'NV_1_0', 'C_1_1', '-C_1_2', 'NV_1_3', 'C_2_0', 'NV_2_1', 'NV_2_2', '-C_2_3', '-C_3_0', 'C_3_1', '-C_3_2', '-C_3_3'],
 ['NV_0_0', 'C_0_1', 'NV_0_2', '-C_0_3', 'C_1_0', 'NV_1_1', '-C_1_2', 'NV_1_3', '-C_2_0', '-C_2_1', 'NV_2_2', 'NV_2_3', 'NV_3_0', '-C_3_1', 'NV_3_2', '-C_3_3'],
-['-C_0_0', 'C_0_1', '-C_0_2', '-C_0_3', 'C_1_0', 'NV_1_1', 'NV_1_2', '-C_1_3', '-C_2_0', 'NV_2_1', 'NV_2_2', 'NV_2_3', 'NV_3_0', '-C_3_1', '-C_3_2', '-C_3_3']
+['-C_0_0', 'C_0_1', '-C_0_2', '-C_0_3', 'C_1_0', 'NV_1_1', 'NV_1_2', '-C_1_3', '-C_2_0', 'NV_2_1', 'NV_2_2', 'NV_2_3', 'NV_3_0', '-C_3_1', '-C_3_2', '-C_3_3'],
+['NV_0_0', 'NV_0_1', 'NV_0_2', 'NV_0_3', 'NV_1_0', 'C_1_1', 'NV_1_2', 'NV_1_3', 'NV_2_0', 'NV_2_1', 'C_2_2', 'NV_2_3', 'NV_3_0', 'NV_3_1', 'NV_3_2', 'NV_3_3'],
+['C_0_0', 'NV_0_1', 'NV_0_2', 'NV_0_3', 'NV_1_0', 'NV_1_1', 'NV_1_2', 'NV_1_3', 'NV_2_1', 'NV_2_0', 'NV_2_2', 'NV_2_3', 'NV_3_0', 'NV_3_2', 'NV_3_1', 'NV_3_3'],
+['-C_0_0', 'NV_0_1', 'NV_0_2', 'NV_0_3', 'NV_1_0', 'NV_1_1', 'NV_1_2', 'C_1_3', 'NV_2_1', 'NV_2_0', 'NV_2_2', 'NV_2_3', 'NV_3_0', 'NV_3_2', 'NV_3_1', 'NV_3_3'],
+['NV_0_0', '-C_0_1', 'NV_0_2', 'NV_0_3', '-C_1_0', 'C_1_1', 'NV_1_2', 'NV_1_3', '-C_2_1', 'NV_2_0', 'NV_2_2', 'NV_2_3', 'NV_3_0', 'NV_3_2', 'NV_3_1', '-C_3_3'],
+['-C_0_0', 'NV_0_1', 'NV_0_2', '-C_0_3', '-C_1_0', '-C_1_1', '-C_1_2', 'NV_1_3', 'NV_2_0', 'C_2_1', '-C_2_2', '-C_2_3', 'C_3_0', 'NV_3_1', 'C_3_2', '-C_3_3'],
+['-C_0_0', 'NV_0_1', '-C_0_2', 'C_0_3', '-C_1_0', 'NV_1_1', 'C_1_2', 'NV_1_3', 'NV_2_0', '-C_2_1', '-C_2_2', 'C_2_3', '-C_3_0', '-C_3_1', 'NV_3_2', '-C_3_3'],
+['C_0_0', 'NV_0_1', 'NV_0_2', '-C_0_3', '-C_1_0', 'C_1_1', '-C_1_2', 'NV_1_3', '-C_2_0', '-C_2_1', '-C_2_2', '-C_2_3', '-C_3_0', '-C_3_1', 'NV_3_2', '-C_3_3'],
+['-C_0_0', '-C_0_1', 'C_0_2', 'NV_0_3', '-C_1_0', '-C_1_1', '-C_1_2', 'NV_1_3', 'NV_2_0', '-C_2_1', '-C_2_2', '-C_2_3', '-C_3_0', '-C_3_1', '-C_3_2', 'NV_3_3'],
+['NV_0_0', '-C_0_1', '-C_0_2', 'NV_0_3', '-C_1_0', '-C_1_1', 'NV_1_2', 'NV_1_3', '-C_2_0', '-C_2_1', 'C_2_2', 'NV_2_3', '-C_3_0', 'C_3_1', 'NV_3_2', 'C_3_3'],
+['-C_0_0', '-C_0_1', '-C_0_2', '-C_0_3', 'NV_1_0', '-C_1_1', '-C_1_2', 'NV_1_3', 'C_2_0', '-C_2_1', '-C_2_2', 'NV_2_3', 'NV_3_0', 'C_3_1', 'NV_3_2', 'NV_3_3']
 ]
 
 import pprint
@@ -176,39 +186,40 @@ def is_1_2_safe(state):
 			else:	# no 'C' or '0'
 				theInsertValue = 0
 				pass
-    # '''
-    # debug
+	# '''
+	# debug
 	for x in range(16):
 		if x%4 == 0:
 			print "\n",
 		print "%s," %newDict[x],
-    # '''
+	# '''
 
 	print "\n"
 	ghostList = [element for element, pos in newDict.items() if pos > 0]
 	print "ghosts at id %s" %ghostList
 	mostSure = max(newDict, key=newDict.get)
+	sameSure = [ele for ele, val in newDict.items() if val == newDict[mostSure]]
 
 	ghostPos = [(seems/4, ((seems+1)%4)-1) for seems in ghostList ]
 	print "ghostPos %s" %ghostPos
 
-    # a ghost at (1,2) and only one ghost detected
-    # OR
-    # a ghost at (1,2) and the most likely is at (1,2)
-	if (1,2) in ghostPos and (len(ghostPos) == 1 or ((mostSure/4, ((mostSure+1)%4)-1) == (1,2))):
+	# a ghost at (1,2) and only one ghost detected
+	# OR
+	# a ghost at (1,2) and the most likely is at (1,2)
+	if (1,2) in ghostPos and len(sameSure)==1 and (len(ghostPos) == 1 or ((mostSure/4, ((mostSure+1)%4)-1) == (1,2))):
 		return 'Ghost_1_2'	# Ghost_1_2 == a ghost
 
-    # there are several ghots BUT none at (1,2)
+	# there are several ghots BUT none at (1,2)
 	elif (1,2) not in ghostPos:
 		return 'Safe_1_2'	# Safe_1_2 == no ghost
 
-    # anything else
+	# anything else
 	else:
 		return 'Unsafe_1_2'	# Unsafe_1_2 == maybe a ghost
 
 if __name__ == '__main__':
-    for tests in someTestStates:
-        print is_1_2_safe(state=tests)
-        print "\n\n\n"
+	for tests in someTestStates:
+		print is_1_2_safe(state=tests)
+		print "\n\n\n"
 
 

@@ -39,7 +39,7 @@ The state can be visualized rudimentarily with the show_state function given
 below - for this example state it looks like this:
 
 [['0', '.', '.', '0'],	[(0,0), (0,1), (0,2), (0,3)],
- ['.', 'C', 'G', 'C'],	[(1,0), (1,1), G?, (1,3)],
+ ['.', 'C', 'G', 'C'],	[(1,0), (1,1),  ?G? , (1,3)],
  ['0', '.', 'C', '0'],	[(2,0), (2,1), (2,2), (2,3)],
  ['0', '.', '.', '0']]	[(3,0), (3,1), (3,2), (3,3)],
 
@@ -54,6 +54,17 @@ Your solution should work on propositional level, i.e. you should not have to
 parse the positions out of the state symbols, but write rules that work on the 
 state directly.
 """
+testState = [
+'-C_0_0', 'NV_0_1', 'NV_0_2', '-C_0_3',
+'NV_1_0', 'C_1_1', 'NV_1_2', 'C_1_3',
+'-C_2_0', 'NV_2_1', 'C_2_2', '-C_2_3',
+'-C_3_0', 'NV_3_1', 'NV_3_2', '-C_3_3']
+
+testState2 = [
+'NV_0_0', 'NV_0_1', 'NV_0_2', 'NV_0_3',
+'-C_1_0', 'NV_1_1', 'NV_1_2', 'NV_1_3',
+'NV_2_0', 'NV_2_1', 'NV_2_2', 'NV_2_3',
+'C_3_0', 'NV_3_1', 'NV_3_2', 'NV_3_3']
 
 import pprint
 def show_state(state, ghost_pos=None):
@@ -72,6 +83,7 @@ def show_state(state, ghost_pos=None):
 		ss[ghost_pos[0]][ghost_pos[1]] = 'G'
 
 	pprint.pprint(ss)
+	return ss
 
 """
 show_state returns:
@@ -91,22 +103,94 @@ def is_1_2_safe(state):
 	Unsafe_1_2 == maybe a ghost
 	Ghost_1_2 == a ghost
 	"""
+	# orginal
+	# if 1:
+	# 	return 'Safe_1_2'	# Safe_1_2 == no ghost
+	# elif 2:
+	# 	return 'Ghost_1_2'	# Ghost_1_2 == a ghost
+	# else:
+	# 	return 'Unsafe_1_2'	# Unsafe_1_2 == maybe a ghost
 
-	chillyNeighbourhood = ['C_1_1', 'C_1_3', 'C_2_2', 'C_0_2']
-	saveNeighbourhood = ['-C_1_1', '-C_1_3', '-C_2_2', '-C_0_2']
-	unknownNeighbourhood = ['NV_1_1', 'NV_1_3', 'NV_2_2', 'NV_0_2']	#NV_2_1
-	chillyNeighbours = set(state).intersection(chillyNeighbourhood)
-	saveNeighbours = set(state).intersection(saveNeighbourhood)
-	unknownNeighbours = set(state).intersection(unknownNeighbourhood)
+	newDict = dict.fromkeys(range(0,16), 0)	# generate new dict with keys 0-16 and values 0
+	chillyList = []
+	problemMatrix = show_state(state=state, ghost_pos=None)
+	for lineCounter, line in enumerate(problemMatrix):
+		for elementCounter, element in enumerate(line):
+			currentPosition = lineCounter*4+elementCounter
+			topPosition = (lineCounter-1)*4+elementCounter
+			bottomPosition = (lineCounter+1)*4+elementCounter
+			leftPosition = lineCounter*4+(elementCounter-1)
+			rightPosition = lineCounter*4+(elementCounter+1)
 
-    if (len(chillyNeighbours) == 2) and len(saveNeighbours) >= 1:
-        return 'Unsafe_1_2'
-    elif len(chillyNeighbours) >= 3:
-    #elif (('C_2_2' and 'C_0_2') in state) or (('C_1_1' and 'C_1_3') in state):
-        return 'Ghost_1_2'
+			if 'C' in element:
+				theInsertValue = 10
+				newDict[currentPosition] =  -999
+
+				if (lineCounter-1) >= 0:	# there is a line above available
+					newDict[topPosition] += theInsertValue
+				if (lineCounter+1) < 4:		# there is a line underneath available
+					newDict[bottomPosition] += theInsertValue
+				if (elementCounter-1) >= 0:	# there is a left row available
+					newDict[leftPosition] += theInsertValue
+				if (elementCounter+1) < 4:	# there is a right row available
+					newDict[rightPosition] += theInsertValue
+			elif '0' in element:
+				theInsertValue = -10
+				newDict[currentPosition] =  -555
+
+				if (lineCounter-1) >= 0:	# there is a line above available
+					newDict[topPosition] += theInsertValue
+				if (lineCounter+1) < 4:		# there is a line underneath available
+					newDict[bottomPosition] += theInsertValue
+				if (elementCounter-1) >= 0:	# there is a left row available
+					newDict[leftPosition] += theInsertValue
+				if (elementCounter+1) < 4:	# there is a right row available
+					newDict[rightPosition] += theInsertValue
+			else:	# no 'C' or '0'
+				theInsertValue = 0
+				pass
+
+			# currentPosition = lineCounter*4+elementCounter
+			# topPosition = (lineCounter-1)*4+elementCounter
+			# bottomPosition = (lineCounter+1)*4+elementCounter
+			# leftPosition = lineCounter*4+(elementCounter-1)
+			# rightPosition = lineCounter*4+(elementCounter+1)
+
+			# newDict[currentPosition] =  -999
+
+			# if (lineCounter-1) >= 0:	# there is a line above available
+			# 	newDict[topPosition] += theInsertValue
+			# if (lineCounter+1) < 4:		# there is a line underneath available
+			# 	newDict[bottomPosition] += theInsertValue
+			# if (elementCounter-1) >= 0:	# there is a left row available
+			# 	newDict[leftPosition] += theInsertValue
+			# if (elementCounter+1) < 4:	# there is a right row available
+			# 	newDict[rightPosition] += theInsertValue
+
+
+	for x in range(16):
+		if x%4 == 0:
+			print "\n",
+		print "%s," %newDict[x],
+
+	ghostList = [element for element, pos in newDict.items() if pos > 0]
+	# ghostList = dict((k, v) for k, v in newDict.items() if v > 0)
+	print "ghostList %s\n" %ghostList
+	ghostPos = [(seems/4, ((seems+1)%4)-1) for seems in ghostList ]
+	print "ghostPos %s\n" %ghostPos
+	# return 0
+
+	if (1,2) in ghostPos:
+		return 'Ghost_1_2'	# Ghost_1_2 == a ghost
+	elif 2:
+		return 'Safe_1_2'	# Safe_1_2 == no ghost
 	else:
-		return 'Safe_1_2'
+		return 'Unsafe_1_2'	# Unsafe_1_2 == maybe a ghost
 
 if __name__ == '__main__':
-	print "nothing"
+	is_1_2_safe(state=testState)
+	print "\n"
+
+	is_1_2_safe(state=testState2)
+
 

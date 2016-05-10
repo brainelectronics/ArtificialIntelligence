@@ -91,6 +91,7 @@ def is_1_2_safe(state):
 	Unsafe_1_2 == maybe a ghost
 	Ghost_1_2 == a ghost
 	"""
+
 	chillyNeighbourhood = ['C_1_1', 'C_1_3', 'C_2_2', 'C_0_2']
 	saveNeighbourhood = ['-C_1_1', '-C_1_3', '-C_2_2', '-C_0_2']
 	unknownNeighbourhood = ['NV_1_1', 'NV_1_3', 'NV_2_2', 'NV_0_2']	#NV_2_1

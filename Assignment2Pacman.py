@@ -173,9 +173,9 @@ def is_1_2_safe(state):
 			print "\n",
 		print "%s," %newDict[x],
 
+	print "\n"
 	ghostList = [element for element, pos in newDict.items() if pos > 0]
-	# ghostList = dict((k, v) for k, v in newDict.items() if v > 0)
-	print "ghostList %s\n" %ghostList
+	print "ghosts at id %s\n" %ghostList
 	ghostPos = [(seems/4, ((seems+1)%4)-1) for seems in ghostList ]
 	print "ghostPos %s\n" %ghostPos
 	# return 0

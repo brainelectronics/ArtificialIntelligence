@@ -246,8 +246,12 @@ def depthFirstSearch(problem):
             print "found goal"
             myWay = currentPosition
             break
-        if currentState not in myVisited:
-            myVisited.append(currentState)
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
         nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
 
         for ele in nextDirections:
@@ -297,8 +301,12 @@ def breadthFirstSearch(problem):
             print "found goal"
             myWay = currentPosition
             break
-        if currentState not in myVisited:
-            myVisited.append(currentState)
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
         nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
 
         for ele in nextDirections:
@@ -345,8 +353,12 @@ def uniformCostSearch(problem):
             print "found goal"
             myWay = currentPosition
             break
-        if currentState not in myVisited:
-            myVisited.append(currentState)
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
         nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
 
         for ele in nextDirections:
@@ -552,23 +564,31 @@ class CornersProblem(search.SearchProblem):
                 # hitsWall = self.walls[nextx][nexty]
                 
                 "*** YOUR CODE HERE ***"
-            
-                #raise NotImplementedError
-                pass
-            
-                x, y = state[:2]
-                dx, dy = Actions.directionToVector(action)
-                nextx, nexty = int(x + dx), int(y + dy)
+                givenCornersLeft = state[1] # get the corners which are not visited
+                #print "cornersLeft", cornersLeft
+                
+                # angabe
+                (x,y) = state[0] # first element of triple
+                (dx, dy) = Actions.directionToVector(action)
+                (nextx, nexty)= int(x + dx), int(y + dy)
                 hitsWall = self.walls[nextx][nexty]
-                print "hitsWall", hitsWall
-                if hitsWall:
-                    stepCost = 1 # angabe
-                    newSuccessor = ((nextx, nexty))
-                    successors.append((newSuccessor, action, stepCost))
-            self._expanded += 1
+                # ende angabe
+                if not hitsWall:
+                    # Add a successor state to the successor list if the action is legal
+                    thisTimeCornersLeft = []
+                    for aCorner in givenCornersLeft:
+                        thisTimeCornersLeft.append(aCorner)
+                        
+                    if (nextx, nexty) in thisTimeCornersLeft:
+                        thisTimeCornersLeft.remove((nextx,nexty))
+                    stepCost = 1 # ... and a cost of 1
+                    newSubSuccessor = ((nextx, nexty), thisTimeCornersLeft) # update with this loop remaining corners
+                    newSuccessor = (newSubSuccessor, action, 1)
+                    #print "newSuccessor", newSuccessor
+                    successors.append(newSuccessor)            
+              
+            self._expanded += 1 # as done by the already used getSuccessor
             return successors
-            
-        return successors
 
     def getCostOfActions(self, actions):
         """

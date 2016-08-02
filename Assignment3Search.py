@@ -223,13 +223,45 @@ def depthFirstSearch(problem):
     """
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())  # delete this later, otherwise the start state 
-                                                                                 # will count as expanded twice!
+    #print "Start's successors:", problem.getSuccessors(problem.getStartState())  # delete this later, otherwise the start state 
+    #                                                                             # will count as expanded twice!
 
     print 'problem', problem
 
-    "*** YOUR CODE HERE ***"
-    raise NotImplementedError
+
+    myStack = Stack()
+
+    nextOfStart = problem.getStartState()
+    myVisited = [nextOfStart] # liste fur alle besuchten positionen
+    #print nextOfStart
+    myWay = []
+    myStack.push((nextOfStart, []))
+
+    #for x in range(50):
+    while not myStack.isEmpty():
+        currentState, currentPosition = myStack.pop() # ich bin gerade bei z.b. (5, 5)
+        #print "i am at", currentState
+
+        if problem.isGoalState(currentState): # found goal
+            print "found goal"
+            myWay = currentPosition
+            break
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
+        nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
+
+        for ele in nextDirections:
+            (theNeighbor, theDirection) = ele[0], ele[1]
+            if theNeighbor not in myVisited:
+                someStuff = (theNeighbor, (currentPosition+[theDirection]))
+                #print someStuff
+                myStack.push(someStuff) # legt alle weiteren moglichen richtungen auf stack
+        
+    return myWay
 
 # sa = SearchAgent(fn=depthFirstSearch, prob=PositionSearchProblem)
 # gameDisplay = NotebookGraphics(sleep_time=0.2)  # visualization
@@ -251,7 +283,40 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first, and return the corresponding path.
     """
     "*** YOUR CODE HERE ***"
-    raise NotImplementedError
+    # reused stuff from above...
+    myQueue = Queue()
+
+    myVisited = [] # leere liste fur alle besuchten positionen
+    nextOfStart = problem.getStartState()
+    #print nextOfStart
+    myWay = []
+    myQueue.push((nextOfStart, []))
+
+    #for x in range(50):
+    while not myQueue.isEmpty():
+        currentState, currentPosition = myQueue.pop() # ich bin gerade bei z.b. (5, 5)
+        #print "i am at", currentState
+
+        if problem.isGoalState(currentState): # found goal
+            print "found goal"
+            myWay = currentPosition
+            break
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
+        nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
+
+        for ele in nextDirections:
+            (theNeighbor, theDirection) = ele[0], ele[1]
+            if theNeighbor not in myVisited:
+                nextQueueStuff = (theNeighbor, (currentPosition+[theDirection])) 
+                #print nextQueueStuff
+                myQueue.push(nextQueueStuff) 
+        
+    return myWay
 
 # sa = SearchAgent(fn=breadthFirstSearch, prob=PositionSearchProblem)
 # gameDisplay = NotebookGraphics(sleep_time=0.01)  # visualization
@@ -270,7 +335,40 @@ mostly be the same as in the other search functions.
 def uniformCostSearch(problem):
     "Search the node of least total cost first."
     "*** YOUR CODE HERE ***"
-    raise NotImplementedError
+    # reused stuff from above...
+    myPrioQueue = PriorityQueue()
+
+    myVisited = [] # leere liste fur alle besuchten positionen
+    nextOfStart = problem.getStartState()
+    #print nextOfStart
+    myWay = []
+    myPrioQueue.push((nextOfStart, [], 0), 0) #(element, weight)
+
+    #for x in range(50):
+    while not myPrioQueue.isEmpty():
+        (currentState, currentPosition, costOfThisState) = myPrioQueue.pop() # ich bin gerade bei z.b. (5, 5)
+        #print "i am at", currentState
+
+        if problem.isGoalState(currentState): # found goal
+            print "found goal"
+            myWay = currentPosition
+            break
+        # unkomment, because double expaneded
+        #if currentState not in myVisited:
+        #    myVisited.append(currentState)
+        if currentState in myVisited:
+            continue
+        myVisited.append(currentState)
+        nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
+
+        for ele in nextDirections:
+            (theNeighbor, theDirection, theCost) = ele[0], ele[1], ele[2]
+            if theNeighbor not in myVisited:
+                nextQueueStuff = (theNeighbor, (currentPosition+[theDirection]), (costOfThisState+theCost)) 
+                #print nextQueueStuff
+                myPrioQueue.push(nextQueueStuff, (costOfThisState+theCost)) 
+        
+    return myWay
 
 # sa = SearchAgent(fn=uniformCostSearch, prob=PositionSearchProblem)
 # gameDisplay = NotebookGraphics(sleep_time=0.01)  # visualization
@@ -297,7 +395,35 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     "Search the node that has the lowest combined cost and heuristic first."
     "*** YOUR CODE HERE ***"
     
-    raise NotImplementedError
+    myPrioQueue = PriorityQueue()
+
+    myVisited = [] # leere liste fur alle besuchten positionen
+    nextOfStart = problem.getStartState()
+    #print nextOfStart
+    myWay = []
+    myPrioQueue.push((nextOfStart, [], 0), 0) #(element, weight)
+
+    #for x in range(50): # for safety!
+    while not myPrioQueue.isEmpty():
+        (currentState, currentPosition, costOfThisState) = myPrioQueue.pop() # ich bin gerade bei z.b. (5, 5)
+        # print "i am at", currentState
+
+        if problem.isGoalState(currentState): # found goal
+            print "found goal"
+            myWay = currentPosition
+            break
+        if currentState not in myVisited:
+            myVisited.append(currentState)
+            nextDirections = problem.getSuccessors(currentState) # alle moglichen richtugnen vom aktuellen stand
+
+            for ele in nextDirections:
+                (theNeighbor, theDirection, theCost) = ele[0], ele[1], ele[2]
+                if theNeighbor not in myVisited:
+                    nextQueueStuff = (theNeighbor, (currentPosition+[theDirection]), (costOfThisState+theCost)) 
+                    # print nextQueueStuff
+                    myPrioQueue.push(nextQueueStuff, (costOfThisState+theCost+heuristic(theNeighbor, problem))) 
+
+    return myWay
 
 """
 You can test your A* implementation on the original problem of finding a path 
@@ -383,18 +509,28 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # Number of search nodes expanded
+
+
         # Please add any code here which you would like to use
-        # in initializing the problem        
+        # in initializing the problem     
+        self.theStartState = (self.startingPosition, self.corners) #?!   
         
     def getStartState(self):
         "Returns the start state (in your state space, not the full Pacman state space)"
         "*** YOUR CODE HERE ***"
-        raise NotImplementedError
+        # raise NotImplementedError
+        return self.theStartState
 
     def isGoalState(self, state):
         "Returns whether this search state is a goal state of the problem"
         "*** YOUR CODE HERE ***"
-        raise NotImplementedError
+        # raise NotImplementedError
+        isGoal = False
+        if state in self.corners:
+            isGoal = True
+        else:
+            isGoal = False
+        return isGoal
 
     def getSuccessors(self, state):
         """
@@ -416,11 +552,43 @@ class CornersProblem(search.SearchProblem):
             # nextx, nexty = int(x + dx), int(y + dy)
             # hitsWall = self.walls[nextx][nexty]
             
-            "*** YOUR CODE HERE ***"
-        
-            raise NotImplementedError
-            
-        return successors
+            "*** YOUR CODE HERE ***" 
+            # raise NotImplementedError
+            successors = []
+            for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+                # Add a successor state to the successor list if the action is legal
+                # Here's a code snippet for figuring out whether a new position hits a wall:
+                # x, y = state[:2]
+                # dx, dy = Actions.directionToVector(action)
+                # nextx, nexty = int(x + dx), int(y + dy)
+                # hitsWall = self.walls[nextx][nexty]
+                
+                "*** YOUR CODE HERE ***"
+                givenCornersLeft = state[1] # get the corners which are not visited
+                #print "cornersLeft", cornersLeft
+                
+                # angabe
+                (x,y) = state[0] # first element of triple
+                (dx, dy) = Actions.directionToVector(action)
+                (nextx, nexty)= int(x + dx), int(y + dy)
+                hitsWall = self.walls[nextx][nexty]
+                # ende angabe
+                if not hitsWall:
+                    # Add a successor state to the successor list if the action is legal
+                    thisTimeCornersLeft = []
+                    for aCorner in givenCornersLeft:
+                        thisTimeCornersLeft.append(aCorner)
+                        
+                    if (nextx, nexty) in thisTimeCornersLeft:
+                        thisTimeCornersLeft.remove((nextx,nexty))
+                    stepCost = 1 # ... and a cost of 1
+                    newSubSuccessor = ((nextx, nexty), thisTimeCornersLeft) # update with this loop remaining corners
+                    newSuccessor = (newSubSuccessor, action, 1)
+                    #print "newSuccessor", newSuccessor
+                    successors.append(newSuccessor)            
+              
+            self._expanded += 1 # as done by the already used getSuccessor
+            return successors
 
     def getCostOfActions(self, actions):
         """

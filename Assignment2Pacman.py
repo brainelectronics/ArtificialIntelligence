@@ -148,11 +148,16 @@ def is_1_2_safe(state):
     # else:
     #   return 'Unsafe_1_2' # Unsafe_1_2 == maybe a ghost
 
-    newDict = dict.fromkeys(range(0,16), 0) # generate new dict with keys 0-16 and values 0
-    chillyList = []
+    # generate new dict with keys 0-16 and values 0
+    newDict = dict.fromkeys(range(0,16), 0)
+    # convert given state list to readable list
     problemMatrix = show_state(state=state, ghost_pos=None)
+
+    # go through all lists in the problemMatrix and carry a counter with you
     for lineCounter, line in enumerate(problemMatrix):
+        # go through all elements of a list and carry a second counter with you
         for elementCounter, element in enumerate(line):
+            # calculate positions around the current one
             currentPosition = lineCounter*4+elementCounter
             topPosition = (lineCounter-1)*4+elementCounter
             bottomPosition = (lineCounter+1)*4+elementCounter
@@ -161,7 +166,7 @@ def is_1_2_safe(state):
 
             if 'C' in element:
                 theInsertValue = 10
-                newDict[currentPosition] =  -999
+                newDict[currentPosition] =  -999    # assign a very low value
 
                 if (lineCounter-1) >= 0:    # there is a line above available
                     newDict[topPosition] += theInsertValue
@@ -173,7 +178,7 @@ def is_1_2_safe(state):
                     newDict[rightPosition] += theInsertValue
             elif '0' in element:
                 theInsertValue = -10
-                newDict[currentPosition] =  -555
+                newDict[currentPosition] =  -555    # assign a very low valie
 
                 if (lineCounter-1) >= 0:    # there is a line above available
                     newDict[topPosition] += theInsertValue
@@ -193,25 +198,31 @@ def is_1_2_safe(state):
         print "%s," %newDict[x],
     # '''
 
-    print "\n"
+    # make a new list of all possible ghost positions which are larger than 0
     ghostList = [element for element, pos in newDict.items() if pos > 0]
-    print "ghosts at id %s" %ghostList
+    # find the position with the highest possibility of a ghost position
     mostSure = max(newDict, key=newDict.get)
+    # a new list with positions of same possibility
     sameSure = [ele for ele, val in newDict.items() if val == newDict[mostSure]]
-
-    ghostPos = [(seems/4, ((seems+1)%4)-1) for seems in ghostList ]
+    # convert the position of the ghost back to (x,y) coordinates
+    ghostPos = [(seems/4, ((seems+1)%4)-1) for seems in ghostList]
+    # '''
+    # debug
+    print "\n"
+    print "ghosts at id %s" %ghostList
     print "ghostPos %s" %ghostPos
+    # '''
 
     # a ghost at (1,2) and only one ghost detected
     # OR
-    # a ghost at (1,2) and the most likely is at (1,2)
+    # a ghost at (1,2) and only one ghost and the most likely is at (1,2)
     if (1,2) in ghostPos and len(sameSure)==1 and (len(ghostPos) == 1 or ((mostSure/4, ((mostSure+1)%4)-1) == (1,2))):
         return 'Ghost_1_2'  # Ghost_1_2 == a ghost
 
     # there are several ghots BUT none at (1,2)
     elif (1,2) not in ghostPos and len(ghostPos) > 0:
         return 'Safe_1_2'   # Safe_1_2 == no ghost
-        
+
     elif (1,2) not in ghostPos and len(ghostPos) == 0:
         return 'Unsafe_1_2'   # Safe_1_2 == no ghost
 

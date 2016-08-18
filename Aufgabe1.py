@@ -2,6 +2,8 @@
 #!/usr/bin/env python
 # raise error if not possible to create such set
 
+# just a test comment 
+
 import random
 
 def list_of_sets(min_val, max_val, k, l):
